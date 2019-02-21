@@ -1,9 +1,13 @@
-package common
+package zlog
 
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
+
+
+var zLog *zap.Logger
 
 func init() {
 	viper.SetConfigName("config") // name of config file (without extension)
@@ -18,6 +22,8 @@ func init() {
 	viper.SetDefault("logLevel", "INFO")
 	viper.SetDefault("logFile", "app.log")
 	viper.SetDefault("serviceName", "myApp")
+
+	zLog = newLJZapLogger()
 }
 
 // type Config struct {

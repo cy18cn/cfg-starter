@@ -1,4 +1,4 @@
-package log
+package zlog
 
 import (
 	"os"
@@ -9,12 +9,6 @@ import (
 	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
-
-var zLog *zap.Logger
-
-func init() {
-	zLog = newLJZapLogger()
-}
 
 func newZapLogger() (*zap.Logger, error) {
 	encoderConfig := zapcore.EncoderConfig{
