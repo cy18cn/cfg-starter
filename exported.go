@@ -65,3 +65,7 @@ func Fatalf(template string, args ...interface{})  {
 func Errorf(template string, args ...interface{})  {
 	zLog.Sugar().Errorf(template, args)
 }
+
+func GetLogger() *zap.Logger {
+	return zLog
+}
