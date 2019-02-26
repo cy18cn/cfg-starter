@@ -1,29 +1,35 @@
-package cfg
+package common
 
 import (
 	"fmt"
+	"github.com/cy18cn/micro-svc-common/zlog"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
+	"os"
 )
 
-
-var zLog *zap.Logger
-
-func init() {
-	viper.SetConfigName("config") // name of config file (without extension)
-	// viper.AddConfigPath("/etc/appname/")   // path to look for the config file in
-	// viper.AddConfigPath("$HOME/.appname")  // call multiple times to add many search paths
-	viper.AddConfigPath(".")    // optionally look for config in the working directory
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+func InitConfig(reloadConfig func(in fsnotify.Event)) error {
+	viper.SetConfigName("config")                 // name of config file (without extension)
+	viper.AddConfigPath(os.Getenv("CONFIG_PATH")) // call multiple times to add many search paths
+	viper.AddConfigPath("/etc/appname/")          // path to look for the config file in
+	viper.AddConfigPath(".")                      // optionally look for config in the working directory
+	err := viper.ReadInConfig()                   // Find and read the config file
+	if err != nil {                               // Handle errors reading the config file
+		return fmt.Errorf("Fatal error config file: %s \n", err)
 	}
 
 	viper.SetDefault("logLevel", "INFO")
 	viper.SetDefault("logFile", "app.log")
-	viper.SetDefault("serviceName", "myApp")
+	viper.SetDefault("app.name", "myApp")
 
-	zLog = newLJZapLogger()
+	err = zlog.InitProduction(viper.GetString("app.name"))
+	if err != nil {
+		return fmt.Errorf("Fatal error config file: %s \n", err)
+	}
+
+	viper.WatchConfig()
+	viper.OnConfigChange(reloadConfig)
+	return nil
 }
 
 // type Config struct {

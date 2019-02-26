@@ -1,2 +1,1 @@
-# zlog
-add file size and age forzap log
+# micro-svc-common

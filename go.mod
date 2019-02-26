@@ -1,11 +1,23 @@
-module github.com/cy18cn/zlog
+module github.com/cy18cn/micro-svc-common
 
 require (
-	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/pkg/errors v0.8.1 // indirect
+	cloud.google.com/go v0.36.0 // indirect
+	github.com/cy18cn/zlog v0.0.0-20190222033944-3de0f4138e57
+	github.com/denisenkom/go-mssqldb v0.0.0-20190204142019-df6d76eb9289 // indirect
+	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
+	github.com/fsnotify/fsnotify v1.4.7
+	github.com/go-redis/redis v6.15.1+incompatible
+	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gofrs/uuid v3.2.0+incompatible // indirect
+	github.com/jinzhu/gorm v1.9.2
+	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
+	github.com/jinzhu/now v1.0.0 // indirect
+	github.com/lib/pq v1.0.0 // indirect
+	github.com/mattn/go-sqlite3 v1.10.0 // indirect
+	github.com/onsi/ginkgo v1.7.0 // indirect
+	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/spf13/viper v1.3.1
-	go.uber.org/atomic v1.3.2 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.9.1
+	google.golang.org/appengine v1.4.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
