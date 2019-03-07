@@ -1,4 +1,4 @@
-package common
+package container
 
 import (
 	"github.com/rs/xid"
@@ -28,7 +28,7 @@ func casted(i interface{}, t *testing.T) {
 }
 
 func TestNewDefinition(t *testing.T) {
-	id:= xid.New()
+	id := xid.New()
 
 	t.Log(id.String())
 	t.Log(id.String())
