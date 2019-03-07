@@ -19,5 +19,6 @@ require (
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/rs/xid v1.2.1
 	github.com/spf13/viper v1.3.1
+	go.uber.org/zap v1.9.1
 	google.golang.org/appengine v1.4.0 // indirect
 )
