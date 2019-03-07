@@ -2,7 +2,7 @@ package redis
 
 import (
 	"fmt"
-	"github.com/cy18cn/micro-svc-common/zlog"
+	"github.com/cy18cn/zlog"
 	"github.com/go-redis/redis"
 )
 

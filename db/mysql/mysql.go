@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"github.com/cy18cn/micro-svc-common/zlog"
+	"github.com/cy18cn/zlog"
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 )
