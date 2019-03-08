@@ -18,6 +18,7 @@ func (self *parseFormHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 	err := self.parseRequest(req)
 	if err == nil {
 		self.next.ServeHTTP(w, req)
+		return
 	}
 
 	var body string
