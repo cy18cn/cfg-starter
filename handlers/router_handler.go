@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"mime"
 	"net/http"
+	"time"
 )
 
 type parseFormHandler struct {
@@ -15,18 +16,21 @@ type parseFormHandler struct {
 }
 
 func (self *parseFormHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	startTime := time.Now().UnixNano() / 1e6
 	err := self.parseRequest(req)
-	if err == nil {
+	if err != nil {
+		body, _ := self.readBody(req)
+		self.log.Sugar().Errorf("bad request URL: %s, err: %v, body: %s",
+			req.RequestURI,
+			err,
+			body)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	} else {
 		self.next.ServeHTTP(w, req)
-		return
+		self.log.Sugar().Infof("%d ms done to handle request", time.Now().UnixNano()/1e6-startTime)
 	}
 
-	body, _ := self.readBody(req)
-	self.log.Sugar().Errorf("bad request URL: %s, err: %v, body: %s",
-		req.RequestURI,
-		err,
-		body)
-	http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	return
 }
 
 const maxMemory = 10 * 1024 * 1024
