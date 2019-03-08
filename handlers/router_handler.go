@@ -52,9 +52,7 @@ func (self *parseFormHandler) parseRequest(req *http.Request) error {
 		}
 	}
 
-	err = req.ParseForm()
-
-	return nil
+	return req.ParseForm()
 }
 
 func (self *parseFormHandler) readBody(req *http.Request) (body string, err error) {
