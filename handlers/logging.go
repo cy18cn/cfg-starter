@@ -11,8 +11,9 @@ func loggingHandler(next httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		traceId := xid.New().String()
 		method := request.Method
-		zlog.Infof("(trace %s) handle for request url:%s, method: %s",
+		zlog.Infof("(trace %s) handle for request url: %s, method: %s",
 			traceId,
+			request.Method,
 			request.RequestURI)
 
 		var contentType string
@@ -22,12 +23,12 @@ func loggingHandler(next httprouter.Handle) httprouter.Handle {
 
 		switch {
 		case contentType == "application/json":
-			zlog.Infof("(trace %s) request content-type:%s, params: %v",
+			zlog.Infof("(trace %s) request content-type: %s, params: %v",
 				traceId,
 				contentType,
 				request.Form["body"])
 		default:
-			zlog.Infof("(trace %s) request content-type:%s, params:",
+			zlog.Infof("(trace %s) request content-type: %s, params: %v",
 				traceId,
 				contentType,
 				request.Form)
