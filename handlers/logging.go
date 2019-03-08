@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/cy18cn/micro-svc-common/util"
 	"github.com/cy18cn/zlog"
 	"github.com/julienschmidt/httprouter"
@@ -10,6 +9,7 @@ import (
 	"net/http"
 )
 
+// for logging request result
 type responseLogger struct {
 	w        http.ResponseWriter
 	status   int
@@ -29,8 +29,8 @@ func (self *responseLogger) Write(b []byte) (int, error) {
 }
 
 func (self *responseLogger) WriteHeader(statusCode int) {
-	self.status = statusCode
 	self.w.WriteHeader(statusCode)
+	self.status = statusCode
 }
 
 func (self *responseLogger) Status() int {
@@ -56,33 +56,30 @@ func loggingHandler(next httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		traceId := xid.New().String()
 		method := request.Method
-		zlog.Info(traceId,
-			zap.String("uri", request.RequestURI),
-			zap.String("method", request.Method))
-
 		var contentType string
 		if method == http.MethodPost || method == http.MethodPut || method == http.MethodPatch {
 			contentType, _ = getRequestContentType(request)
 		}
+		zlog.Info("request",
+			zap.String("traceId", traceId),
+			zap.String("uri", request.RequestURI),
+			zap.String("method", request.Method),
+			zap.String("contentType", contentType))
 
-		switch {
-		case contentType == "application/json":
-			zlog.Info(traceId,
-				zap.String("contentType", contentType),
-				zap.String("body", request.Form["body"][0]))
-		default:
-			zlog.Info(traceId,
-				zap.String("contentType", contentType),
-				zap.Any("params", request.Form))
-		}
+		zlog.Info("request params",
+			zap.String("traceId", traceId),
+			zap.Any("params", request.Form))
 		request.Form["traceId"] = []string{traceId} // add traceId for logging
+
 		w := &responseLogger{
 			w: writer,
 		}
 		next(w, request, params)
-		zlog.Info(fmt.Sprintf("%s response", traceId),
-			zap.Int("status", w.status),
-			zap.Int("responseSize", w.size),
-			zap.String("response", string(w.respBody)))
+
+		zlog.Info("response",
+			zap.String("traceId", traceId),
+			//zap.Int("status", w.Status()),
+			zap.Int("responseSize", w.Size()),
+			zap.String("result", string(w.RespBody())))
 	}
 }
