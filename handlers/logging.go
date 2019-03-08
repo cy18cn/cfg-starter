@@ -4,6 +4,7 @@ import (
 	"github.com/cy18cn/zlog"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/xid"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -11,10 +12,9 @@ func loggingHandler(next httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		traceId := xid.New().String()
 		method := request.Method
-		zlog.Infof("(trace %s) handle for request url: %s, method: %s",
-			traceId,
-			request.Method,
-			request.RequestURI)
+		zlog.Info(traceId,
+			zap.String("uri", request.RequestURI),
+			zap.String("method", request.Method))
 
 		var contentType string
 		if method == http.MethodPost || method == http.MethodPut || method == http.MethodPatch {
@@ -23,15 +23,13 @@ func loggingHandler(next httprouter.Handle) httprouter.Handle {
 
 		switch {
 		case contentType == "application/json":
-			zlog.Infof("(trace %s) request content-type: %s, params: %v",
-				traceId,
-				contentType,
-				request.Form["body"])
+			zlog.Info(traceId,
+				zap.String("contentType", contentType),
+				zap.String("body", request.Form["body"][0]))
 		default:
-			zlog.Infof("(trace %s) request content-type: %s, params: %v",
-				traceId,
-				contentType,
-				request.Form)
+			zlog.Info(traceId,
+				zap.String("contentType", contentType),
+				zap.Any("params", request.Form))
 		}
 		request.Form["traceId"] = []string{traceId} // add traceId for logging
 		next(writer, request, params)

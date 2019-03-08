@@ -3,7 +3,7 @@ module github.com/cy18cn/micro-svc-common
 require (
 	cloud.google.com/go v0.36.0 // indirect
 	github.com/cy18cn/cast v1.4.0
-	github.com/cy18cn/zlog v0.0.0-20190222033944-3de0f4138e57
+	github.com/cy18cn/zlog v0.0.2
 	github.com/denisenkom/go-mssqldb v0.0.0-20190204142019-df6d76eb9289 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/go-redis/redis v6.15.1+incompatible

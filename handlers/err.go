@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/cy18cn/zlog"
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -60,11 +61,11 @@ func errorHandler(next httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		defer func() {
 			if r := recover(); r != nil {
-				zlog.Errorf("failed to handle URL: %s, method: %s, params: %v, err: %v",
-					request.RequestURI,
-					request.Method,
-					request.Form,
-					r)
+				zlog.Error("failed to handle",
+					zap.String("uri", request.RequestURI),
+					zap.String("method", request.Method),
+					zap.Any("params", request.Form),
+					zap.Any("err", r))
 				http.Error(writer,
 					http.StatusText(http.StatusInternalServerError),
 					http.StatusInternalServerError)

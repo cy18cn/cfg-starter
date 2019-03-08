@@ -42,13 +42,13 @@ func (self *parseFormHandler) parseRequest(req *http.Request) error {
 		case contentType == "application/json":
 			var body string
 			body, err = self.readBody(req)
-			if err == nil {
-				req.Form["body"] = []string{body}
+			if err != nil {
+				return err
 			}
+			req.Form["body"] = []string{body}
 			return nil
 		case contentType == "multipart/form-data":
-			err = req.ParseMultipartForm(maxMemory)
-			return nil
+			return req.ParseMultipartForm(maxMemory)
 		}
 	}
 
