@@ -21,8 +21,7 @@ func (self *parseFormHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	var body string
-	body, err = self.readBody(req)
+	body, _ := self.readBody(req)
 	self.log.Sugar().Errorf("bad request URL: %s, err: %v, body: %s",
 		req.RequestURI,
 		err,
@@ -32,31 +31,30 @@ func (self *parseFormHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 
 const maxMemory = 10 * 1024 * 1024
 
-func (self *parseFormHandler) parseRequest(req *http.Request) (err error) {
-	contentType := req.Header.Get("Content-Type")
-	// RFC 7231, section 3.1.1.5 - empty type
-	//   MAY be treated as application/octet-stream
-	if contentType == "" {
-		contentType = "application/octet-stream"
-	}
-
-	contentType, _, err = mime.ParseMediaType(contentType)
-	switch {
-	case contentType == "application/json":
-		var body string
-		body, err = self.readBody(req)
-		if err == nil {
-			req.Form["body"] = []string{body}
+func (self *parseFormHandler) parseRequest(req *http.Request) error {
+	if req.Method == http.MethodPost || req.Method == http.MethodPut || req.Method == http.MethodPatch {
+		contentType, err := getRequestContentType(req)
+		if err != nil {
+			return err
 		}
-	case contentType == "application/x-www-form-urlencoded":
-		err = req.ParseForm()
-	case contentType == "multipart/form-data":
-		err = req.ParseMultipartForm(maxMemory)
-	default:
-		err = errors.New("unsupported content type")
+
+		switch {
+		case contentType == "application/json":
+			var body string
+			body, err = self.readBody(req)
+			if err == nil {
+				req.Form["body"] = []string{body}
+			}
+			return nil
+		case contentType == "multipart/form-data":
+			err = req.ParseMultipartForm(maxMemory)
+			return nil
+		}
 	}
 
-	return
+	err = req.ParseForm()
+
+	return nil
 }
 
 func (self *parseFormHandler) readBody(req *http.Request) (body string, err error) {
@@ -80,4 +78,17 @@ func (self *parseFormHandler) readBody(req *http.Request) (body string, err erro
 	}
 
 	return
+}
+
+func getRequestContentType(r *http.Request) (string, error) {
+	contentType := r.Header.Get("Content-Type")
+	// RFC 7231, section 3.1.1.5 - empty type
+	//   MAY be treated as application/octet-stream
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	var err error
+	contentType, _, err = mime.ParseMediaType(contentType)
+	return contentType, err
 }

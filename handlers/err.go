@@ -60,8 +60,11 @@ func errorHandler(next httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		defer func() {
 			if r := recover(); r != nil {
-				zlog.Errorf("failed to handle url(%s), err: %v",
-					request.RequestURI, r, request.Form)
+				zlog.Errorf("failed to handle URL: %s, method: %s, params: %v, err: %v",
+					request.RequestURI,
+					request.Method,
+					request.Form,
+					r)
 				http.Error(writer,
 					http.StatusText(http.StatusInternalServerError),
 					http.StatusInternalServerError)
